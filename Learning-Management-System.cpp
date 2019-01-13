@@ -311,6 +311,7 @@ bool saveCourses(string codeList[], string nameList[], int crtHrsList[], int sem
 	return value;
 }
 
+//this function will load courses in memory when program is being loaded
 bool loadCourses(string codeList[], string nameList[], int crtHrsList[], int semList[])
 {
 	ifstream check, op;
@@ -422,6 +423,7 @@ void ViewCourses(string codeList[], string nameList[], int crtHrsList[], int sem
 	}
 }
 
+//this function will check whether the inputed credentials are true or not
 bool loadUsers(char usersList[], char passwordsList[])
 {
 	ifstream users;
