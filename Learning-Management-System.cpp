@@ -122,8 +122,6 @@ void AddCourse(string codeList[], string nameList[], int crtHrsList[], int semLi
 	op.close();
 	static int n = var + 1;
 	static int c = 0;
-	
-	
 
 	if (isValidSemester(semester) == 1 && isValidCourseCode(course_code) == 1 && isValidCreditHours(credit_hours) == 1 && isValidCourseName(course_name) == 1)
 	{
@@ -138,7 +136,7 @@ void AddCourse(string codeList[], string nameList[], int crtHrsList[], int semLi
 			a++;
 			flag = 0;
 		}
-		else if (var!=0)
+		else if (var != 0)
 		{
 			codeList[n] = course_code;
 			crtHrsList[n] = credit_hours;
@@ -154,10 +152,10 @@ void AddCourse(string codeList[], string nameList[], int crtHrsList[], int semLi
 			semList[c] = semester;
 			nameList[c] = course_name;
 			cout << "\nCourse has been added successfully" << endl;
-			c++;	
+			c++;
 		}
 	}
-	if(var == 0)
+	if (var == 0)
 	{
 		counter2 = c;
 	}
@@ -165,7 +163,6 @@ void AddCourse(string codeList[], string nameList[], int crtHrsList[], int semLi
 	{
 		counter2 = n;
 	}
-	
 }
 
 //this function will check whether the course code which we want to edit is in the program.
@@ -186,10 +183,25 @@ int check_course_code(string codeList[], string edit_course_code)
 //this function will return the index where details of the course are placed
 int index_course_code(string codeList[], string edit_course_code)
 {
-	int index;
+	int index = 0;
 	for (int x = 0; x < 100; x++)
 	{
 		if (codeList[x] == edit_course_code)
+		{
+			index = x;
+			break;
+		}
+	}
+	return index;
+}
+
+//this function will return the index where details of the registration number are placed
+int index_reg_code(string stdRegNoList[], string edit_reNo)
+{
+	int index = 0;
+	for (int x = 0; x < 100; x++)
+	{
+		if (stdRegNoList[x] == edit_reNo)
 		{
 			index = x;
 			break;
@@ -227,7 +239,7 @@ void EditCourse(string codeList[], string nameList[], int crtHrsList[], int semL
 		crtHrsList[n] = credit_hours;
 		semList[n] = semester;
 		nameList[n] = course_name;
-		cout << "\nCourse has been edited successfully\n";
+		cout << "\nCourse has been edited successfully.\n";
 	}
 	else
 	{
@@ -507,11 +519,130 @@ bool loadUsers(char usersList[], char passwordsList[])
 	}
 }
 
+//this function will check whether the entered registratoon number is valid or not
+bool isValidRegistrationNumber(char regNo[])
+{
+	bool value = 1, value2 = 0, value3 = 0, value4 = 0, value5 = 0, value6 = 0;
+
+	if (regNo[0] == '2' && regNo[1] == '0' && regNo[2] == '1' && regNo[4] == '-' && regNo[7] == '-' && regNo[11] == '\0')
+	{
+
+		for (char i = '0'; i < '9'; i++)
+		{
+			if (regNo[3] != i)
+			{
+				value = 0;
+			}
+			else
+			{
+				value = 1;
+				break;
+			}
+		}
+
+		for (char i = 'A'; i < 'Z'; i++)
+		{
+			if (regNo[5] == i)
+			{
+				value2 = 1;
+			}
+		}
+
+		for (char i = 'A'; i < 'Z'; i++)
+		{
+			if (regNo[6] == i)
+			{
+				value3 = 1;
+			}
+		}
+
+		for (char b = '0'; b <= '9'; b++)
+		{
+			if (regNo[8] == b)
+			{
+				value4 = 1;
+			}
+		}
+		for (char c = '0'; c <= '9'; c++)
+		{
+			if (regNo[9] == c)
+			{
+				value5 = 1;
+			}
+		}
+		for (char d = '0'; d <= '9'; d++)
+		{
+			if (regNo[10] == d)
+			{
+				value6 = 1;
+			}
+		}
+	}
+	else
+	{
+		value = 0;
+	}
+
+	if (value == 1 && value2 == 1 && value3 == 1 && value4 == 1 && value5 == 1 && value6 == 1)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+//this function checks whether the entered student name is valid or not
+bool isValidStudentName(char studentName[])
+{
+	bool value = true;
+	int x = 0;
+	while (studentName[x] != '\0')
+	{
+		for (char y = '0'; y <= '9'; y++)
+		{
+			if (studentName[x] == y)
+			{
+				value = false;
+			}
+		}
+		x++;
+	}
+	return value;
+}
+
+//this function will addstudent in an stdNameList
+void addStudent(string stdNameList[], string stdRegNoList[], char studentName[], char regNo[])
+{
+	static int variable = 0;
+	if (isValidRegistrationNumber(regNo) == 1 && isValidStudentName(studentName) == 1)
+	{
+		stdNameList[variable] = studentName;
+		stdRegNoList[variable] = regNo;
+		variable++;
+		cout << "\nStudent has been added successfully" << endl;
+	}
+}
+
+string edit_reNo;
+//this function will edit the student in the list
+void updateStudent(string stdNameList[], string stdRegNoList[], char studentName[], char regNo[])
+{
+	if (isValidRegistrationNumber(regNo) == 1 && isValidStudentName(studentName) == 1)
+	{
+		int variable = index_reg_code(stdRegNoList, edit_reNo);
+		stdNameList[variable] = studentName;
+		stdRegNoList[variable] = regNo;
+		cout << "\nStudent details have been edited successfully.\n";
+	}
+}
 int main()
 {
-	int option, credit_hours, semester, check_user = 1, loop = 0;
-	char course_code[6], course_name[50], usersList[1000] = {'\0'}, passwordsList[1000] = {'\0'};
-	string delete_course_code, codeList[100], nameList[100];
+	int option, credit_hours, semester, check_user = 1, loop = 0, tab = 0;
+	char course_code[6], course_name[50], usersList[1000] = {'\0'}, passwordsList[1000] = {'\0'}, studentName[100] = {'\0'};
+	char regNo[12] = {'\0'};
+	string delete_course_code, codeList[100], nameList[100], stdNameList[100], stdRegNoList[100], stdCourseList[100][100];
 	int a = 1, crtHrsList[100], semList[100];
 	for (int x = 0; x < 100; x++)
 	{
@@ -548,10 +679,10 @@ int main()
 		} while (check_user == 0);
 
 		loop = check_user;
-		cout << endl
-			 << "You have successfully logged in in your LMS account." << endl;
 
 		system("CLS");
+		cout << endl
+			 << "You have successfully logged in in your LMS account." << endl;
 		while (a)
 		{
 
@@ -563,8 +694,14 @@ int main()
 			cout << "3	Delete Course" << endl;
 			cout << "4 	View All Courses" << endl;
 			cout << "5	View Courses of a Semester" << endl;
-			cout << "6 	Logout of the system" << endl
-				 << "7	Exit Program" << endl
+			cout << "6	Add Student" << endl;
+			cout << "7	Update Student" << endl;
+			cout << "8	Delete Student" << endl;
+			cout << "9 	View All students" << endl;
+			cout << "10	Register the course for student" << endl;
+			cout << "11	Unregister the course for student" << endl;
+			cout << "12	Logout of the system" << endl
+				 << "13	Exit Program" << endl
 				 << endl;
 
 			cout << "Choose the option: ";
@@ -573,7 +710,7 @@ int main()
 
 			if (cin.fail())
 			{
-				option = 7;
+				option = 13;
 			}
 			switch (option)
 			{
@@ -585,22 +722,32 @@ int main()
 				cin >> course_code >> credit_hours >> semester;
 				cin.get(course_name, 100);
 
-				if (isValidCourseCode(course_code) == 0)
+				while (isValidCourseCode(course_code) == 0)
 				{
-					cout << "Invalid Course Code\n";
+					cout << endl
+						 << "Invalid Course Code\n";
+					cout << "Enter Course Code again: ";
+					cin >> course_code;
 				}
-				if (isValidCreditHours(credit_hours) == 0)
+				while (isValidCreditHours(credit_hours) == 0)
 				{
-					cout << "Invalid Credit" << endl;
+					cout << endl
+						 << "Invalid Credit hours" << endl;
+					cout << "Enter Credit hours again: ";
+					cin >> credit_hours;
 				}
-				if (isValidSemester(semester) == 0)
+				while (isValidSemester(semester) == 0)
 				{
-					cout << "Invalid Semester\n";
+					cout << endl
+						 << "Invalid Semester\n";
+					cout << "Enter semester again: ";
+					cin >> semester;
 				}
-				bool b = isValidCourseName(course_name);
-				if (b == false)
+
+				if (isValidCourseName(course_name) == 0)
 				{
-					cout << "Invalid Course Name\n";
+					cout << endl
+						 << "Invalid Course Name\n";
 				}
 
 				AddCourse(codeList, nameList, crtHrsList, semList, course_code, credit_hours, semester, course_name);
@@ -683,6 +830,50 @@ int main()
 
 			case 6:
 			{
+
+				cout << "Enter the details of the student: ";
+				cin >> regNo;
+				cin.get(studentName, 100);
+
+				if (isValidRegistrationNumber(regNo) == 0)
+				{
+					cout << endl
+						 << "Invalid Registration number. Couldn't add the student" << endl;
+				}
+				if (isValidStudentName(studentName) == 0)
+				{
+					cout << endl
+						 << "Invalid Student Name. Couldn't add the student" << endl;
+				}
+
+				addStudent(stdNameList, stdRegNoList, studentName, regNo);
+
+				break;
+			}
+
+			case 7:
+			{
+				cout << "Enter the registration number of the student to edit: ";
+				cin >> edit_reNo;
+
+				if (index_reg_code(stdRegNoList, edit_reNo) == 0)
+				{
+					cout << "\nThere is no student by this registration number. \n";
+				}
+				else
+				{
+					cout << "Enter new details of the student: ";
+					cin >> regNo;
+					cin.get(studentName, 100);
+					updateStudent(stdNameList, stdRegNoList, studentName, regNo);
+				}
+
+				break;
+			}
+
+			//logout from the account
+			case 12:
+			{
 				system("CLS");
 				loop = 0;
 				a = 0;
@@ -690,7 +881,7 @@ int main()
 			}
 
 			//Exit the program
-			case 7:
+			case 13:
 			{
 				a = 0;
 				int a = saveCourses(codeList, nameList, crtHrsList, semList, semester);
