@@ -750,8 +750,9 @@ void registerCourse(string stdRegNoList[], string stdCourseList[][100], string c
 			int y = index_row(stdCourseList, reg_No);
 			stdCourseList[variable][y] = courseCode;
 		}
+		cout << endl
+			 << "Course has been registered for the student." << endl;
 	}
-	cout << endl << "Course has been registered for the student." << endl;
 }
 
 //this function will delete the student from the studentlist
@@ -772,7 +773,6 @@ void deleteStudent(string stdNameList[], string stdRegNoList[], string stdCourse
 
 	if (index_stdCourseList(stdCourseList, reg_no) == -1)
 	{
-
 	}
 
 	else
@@ -787,7 +787,52 @@ void deleteStudent(string stdNameList[], string stdRegNoList[], string stdCourse
 			flag3 = 1;
 		}
 	}
-	cout << endl << "Student has been deleted successfully" << endl;
+	cout << endl
+		 << "Student has been deleted successfully" << endl;
+}
+
+//this function will unregister the course for the student
+void unRegisterCourse(string stdRegNoList[], string stdCourseList[][100], string reg_no, string courseCode)
+{
+	int variable = index_reg_code(stdRegNoList, reg_no);
+	bool value = 1;
+
+	for (int i = 0; stdCourseList[variable][i] != "\0"; i++)
+	{
+		if (stdCourseList[variable][i] == courseCode)
+		{
+			stdCourseList[variable][i] = "\0";
+			value = 1;
+			break;
+		}
+		else
+		{
+			value = 0;
+		}
+	}
+	if (value == 0)
+	{
+		cout << endl
+			 << "There is no course registered for the student by this course code.\n";
+	}
+	else
+	{
+		cout << endl
+			 << "Course has been unregistered successfully.\n";
+	}
+}
+
+//this function will display all the registered students
+void viewstudents(string stdRegNoList[], string stdNameList[])
+{
+	cout << left;
+	cout << setw(31) << "\tStudent Name"
+		 << "Registration Number" << endl;
+	for (int x = 0; stdRegNoList[x] != "\0"; x++)
+	{
+		cout << left;
+		cout << "\t" << setw(30) << stdNameList[x] << stdRegNoList[x] << endl;
+	}
 }
 
 int main()
@@ -1069,6 +1114,30 @@ int main()
 				break;
 			}
 
+			case 10:
+			{
+				cout << "Enter registration number of the student: ";
+				cin >> reg_no;
+				if (index_reg_code(stdRegNoList, reg_no) == -1)
+				{
+					cout << "There is no student by this registration number.\n ";
+				}
+
+				else
+				{
+					cout << "Enter course code to unregister: ";
+					cin >> courseCode;
+					unRegisterCourse(stdRegNoList, stdCourseList, reg_no, courseCode);
+				}
+				break;
+			}
+
+			case 11:
+			{
+				viewstudents(stdRegNoList, stdNameList);
+				break;
+			}
+
 			//logout from the account
 			case 12:
 			{
@@ -1109,6 +1178,9 @@ int main()
 			cout << endl;
 		}
 	}
-
+	ofstream counter;
+	counter.open("AddCourse_Counter.txt");
+	counter << counter2 - 1;
+	counter.close();
 	return 0;
 }
