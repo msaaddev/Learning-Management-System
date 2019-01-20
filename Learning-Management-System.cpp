@@ -108,9 +108,21 @@ int max_index(int semList[])
 	return --counter;
 }
 
+//this function will calculate the max index of string array
+int max_index_regNo(string stdRegNoList[])
+{
+	int a = 0, counter = 0;
+	while (stdRegNoList[a] != "\0")
+	{
+		counter++;
+		a++;
+	}
+	return --counter;
+}
+
 //this statement will declare edit_course and delete course for the whole program
 string edit_course_code;
-int flag = 0, counter = 0, counter2;
+int flag = 0, counter = 0, counter2, flag2 = 0, counter3, flag3 = 0, counter4;
 
 // this function will add course name, credit hours, semester and course code to nameList, crtHrsList, semList, codeList respectively
 void AddCourse(string codeList[], string nameList[], int crtHrsList[], int semList[], char course_code[], int credit_hours, int semester, char course_name[])
@@ -125,20 +137,26 @@ void AddCourse(string codeList[], string nameList[], int crtHrsList[], int semLi
 
 	if (isValidSemester(semester) == 1 && isValidCourseCode(course_code) == 1 && isValidCreditHours(credit_hours) == 1 && isValidCourseName(course_name) == 1)
 	{
-		if (flag)
+		static int a = counter;
+		if (flag == 1)
 		{
 			// when a course is deleted, addCourse function will use this logic to add course details
-			int a = counter;
-			codeList[a] = course_code;
-			crtHrsList[a] = credit_hours;
-			semList[a] = semester;
-			nameList[a] = course_name;
+			int b = counter;
+			codeList[b] = course_code;
+			crtHrsList[b] = credit_hours;
+			semList[b] = semester;
+			nameList[b] = course_name;
 			cout << "\nCourse has been added successfully" << endl;
-			a++;
-			flag = 0;
+			b++;
+			flag = 2;
 		}
 		else if (var != 0)
 		{
+			if (flag == 2)
+			{
+				n = a + 1;
+				flag = 0;
+			}
 			//when there are already courses in an external file, addCourse function will use this logic to add new courses
 			codeList[n] = course_code;
 			crtHrsList[n] = credit_hours;
@@ -150,6 +168,12 @@ void AddCourse(string codeList[], string nameList[], int crtHrsList[], int semLi
 		else
 		{
 			//when there are no courses in the external file, addCourse function will use this logic to add new courses
+			if (flag == 2)
+			{
+				c = counter + 1;
+				flag = 0;
+			}
+
 			codeList[c] = course_code;
 			crtHrsList[c] = credit_hours;
 			semList[c] = semester;
@@ -649,10 +673,29 @@ void addStudent(string stdNameList[], string stdRegNoList[], char studentName[],
 	static int variable = 0;
 	if (isValidRegistrationNumber(regNo) == 1 && isValidStudentName(studentName) == 1)
 	{
-		stdNameList[variable] = studentName;
-		stdRegNoList[variable] = regNo;
-		variable++;
-		cout << "\nStudent has been added successfully" << endl;
+		int b = counter3;
+		if (flag2 == 1)
+		{
+			int a = counter3;
+			stdNameList[a] = studentName;
+			stdRegNoList[a] = regNo;
+			cout << "\nStudent has been added successfully" << endl;
+			a++;
+			flag2 = 2;
+		}
+		else
+		{
+			if (flag2 == 2)
+			{
+				variable = counter3 + 1;
+				flag2 = 0;
+			}
+
+			stdNameList[variable] = studentName;
+			stdRegNoList[variable] = regNo;
+			variable++;
+			cout << "\nStudent has been added successfully" << endl;
+		}
 	}
 }
 
@@ -669,11 +712,6 @@ void updateStudent(string stdNameList[], string stdRegNoList[], char studentName
 	}
 }
 
-//this function will delete the student from the studentlist
-void deleteStudent(string stdNameList[], string stdRegNoList[], string stdCourseList[][100], char regNo[])
-{
-}
-
 //this function will register courses for the student
 void registerCourse(string stdRegNoList[], string stdCourseList[][100], string codeList[], string reg_No, string courseCode)
 {
@@ -684,17 +722,28 @@ void registerCourse(string stdRegNoList[], string stdCourseList[][100], string c
 
 	else
 	{
-
+		//when we add courses in new student registration number in stdCourseList
 		if (index_stdCourseList(stdCourseList, reg_No) == -1)
 		{
-			static int x = 0;
-			int y = 0;
-			stdCourseList[x][y] = reg_No;
-			y++;
-			stdCourseList[x][y] = courseCode;
-			x++;
+			if (flag3)
+			{
+
+				stdCourseList[counter4][0] = reg_No;
+				stdCourseList[counter4][1] = courseCode;
+				flag3 = 0;
+			}
+			else
+			{
+				static int x = 0;
+				int y = 0;
+				stdCourseList[x][y] = reg_No;
+				y++;
+				stdCourseList[x][y] = courseCode;
+				x++;
+			}
 		}
 
+		//when we add courses in exisiting student registration number
 		else
 		{
 			int variable = index_stdCourseList(stdCourseList, reg_No);
@@ -702,6 +751,43 @@ void registerCourse(string stdRegNoList[], string stdCourseList[][100], string c
 			stdCourseList[variable][y] = courseCode;
 		}
 	}
+	cout << endl << "Course has been registered for the student." << endl;
+}
+
+//this function will delete the student from the studentlist
+void deleteStudent(string stdNameList[], string stdRegNoList[], string stdCourseList[][100], string reg_no)
+{
+	int variable = index_reg_code(stdRegNoList, reg_no);
+	int variable2 = max_index_regNo(stdRegNoList);
+
+	for (int x = variable; x <= variable2; x++)
+	{
+		stdRegNoList[x] = stdRegNoList[x + 1];
+		stdNameList[x] = stdNameList[x + 1];
+	}
+	stdRegNoList[variable2] = "\0";
+	stdNameList[variable2] = "\0";
+	flag2 = 1;
+	counter3 = variable2;
+
+	if (index_stdCourseList(stdCourseList, reg_no) == -1)
+	{
+
+	}
+
+	else
+	{
+		int variable3 = index_stdCourseList(stdCourseList, reg_no);
+		int y = index_row(stdCourseList, reg_no);
+		counter4 = variable3;
+
+		for (int x = 0; stdCourseList[variable][x] != "\0"; x++)
+		{
+			stdCourseList[variable3][x] = "\0";
+			flag3 = 1;
+		}
+	}
+	cout << endl << "Student has been deleted successfully" << endl;
 }
 
 int main()
@@ -710,7 +796,7 @@ int main()
 	int option, credit_hours, semester, check_user = 1, loop = 0, tab = 0;
 	char course_code[6], course_name[50], usersList[1000] = {'\0'}, passwordsList[1000] = {'\0'}, studentName[100] = {'\0'};
 	char regNo[12] = {'\0'};
-	string delete_course_code, codeList[100], nameList[100], stdNameList[100], stdRegNoList[100], stdCourseList[100][100], reg_no, courseCode;
+	string delete_course_code, codeList[100], nameList[100], stdNameList[100], stdRegNoList[100] = {"\0"}, stdCourseList[100][100], reg_no, courseCode;
 	int a = 1, crtHrsList[100], semList[100];
 
 	for (int i = 0; i < 100; i++)
@@ -948,6 +1034,18 @@ int main()
 
 			case 8:
 			{
+				cout << "Enter Registration number of the student to delete: ";
+				cin >> reg_no;
+				cout << endl;
+				if (index_reg_code(stdRegNoList, reg_no) == -1)
+				{
+					cout << "There is no student by this registration number.\n ";
+				}
+
+				else
+				{
+					deleteStudent(stdNameList, stdRegNoList, stdCourseList, reg_no);
+				}
 				break;
 			}
 
