@@ -127,6 +127,7 @@ void AddCourse(string codeList[], string nameList[], int crtHrsList[], int semLi
 	{
 		if (flag)
 		{
+			// when a course is deleted, addCourse function will use this logic to add course details
 			int a = counter;
 			codeList[a] = course_code;
 			crtHrsList[a] = credit_hours;
@@ -138,6 +139,7 @@ void AddCourse(string codeList[], string nameList[], int crtHrsList[], int semLi
 		}
 		else if (var != 0)
 		{
+			//when there are already courses in an external file, addCourse function will use this logic to add new courses
 			codeList[n] = course_code;
 			crtHrsList[n] = credit_hours;
 			semList[n] = semester;
@@ -147,6 +149,7 @@ void AddCourse(string codeList[], string nameList[], int crtHrsList[], int semLi
 		}
 		else
 		{
+			//when there are no courses in the external file, addCourse function will use this logic to add new courses
 			codeList[c] = course_code;
 			crtHrsList[c] = credit_hours;
 			semList[c] = semester;
@@ -183,7 +186,7 @@ int check_course_code(string codeList[], string edit_course_code)
 //this function will return the index where details of the course are placed
 int index_course_code(string codeList[], string edit_course_code)
 {
-	int index = 0;
+	int index = -1;
 	for (int x = 0; x < 100; x++)
 	{
 		if (codeList[x] == edit_course_code)
@@ -198,10 +201,25 @@ int index_course_code(string codeList[], string edit_course_code)
 //this function will return the index where details of the registration number are placed
 int index_reg_code(string stdRegNoList[], string edit_reNo)
 {
-	int index = 0;
+	int index = -1;
 	for (int x = 0; x < 100; x++)
 	{
 		if (stdRegNoList[x] == edit_reNo)
+		{
+			index = x;
+			break;
+		}
+	}
+	return index;
+}
+
+//this function will return the index where registration number of the student is stored in 2D array
+int index_stdCourseList(string stdCourseList[][100], string reg_No)
+{
+	int index = -1;
+	for (int x = 0; x < 100; x++)
+	{
+		if (stdCourseList[x][0] == reg_No)
 		{
 			index = x;
 			break;
@@ -223,6 +241,19 @@ int index_delete_code(string codeList[], string delete_course_code)
 		}
 	}
 	return index;
+}
+
+//this function will return us the max index of the row of the 2D array
+int index_row(string stdCourseList[][100], string reg_No)
+{
+	int x = 1, counter = 1;
+	int variable = index_stdCourseList(stdCourseList, reg_No);
+	while (stdCourseList[variable][x] != "\0")
+	{
+		counter++;
+		x++;
+	}
+	return counter;
 }
 
 //this function will replace a course of the specified course code with another course detail
@@ -637,13 +668,58 @@ void updateStudent(string stdNameList[], string stdRegNoList[], char studentName
 		cout << "\nStudent details have been edited successfully.\n";
 	}
 }
+
+//this function will delete the student from the studentlist
+void deleteStudent(string stdNameList[], string stdRegNoList[], string stdCourseList[][100], char regNo[])
+{
+}
+
+//this function will register courses for the student
+void registerCourse(string stdRegNoList[], string stdCourseList[][100], string codeList[], string reg_No, string courseCode)
+{
+	if (index_course_code(codeList, courseCode) == -1)
+	{
+		cout << "There is no course by this course code." << endl;
+	}
+
+	else
+	{
+
+		if (index_stdCourseList(stdCourseList, reg_No) == -1)
+		{
+			static int x = 0;
+			int y = 0;
+			stdCourseList[x][y] = reg_No;
+			y++;
+			stdCourseList[x][y] = courseCode;
+			x++;
+		}
+
+		else
+		{
+			int variable = index_stdCourseList(stdCourseList, reg_No);
+			int y = index_row(stdCourseList, reg_No);
+			stdCourseList[variable][y] = courseCode;
+		}
+	}
+}
+
 int main()
 {
+
 	int option, credit_hours, semester, check_user = 1, loop = 0, tab = 0;
 	char course_code[6], course_name[50], usersList[1000] = {'\0'}, passwordsList[1000] = {'\0'}, studentName[100] = {'\0'};
 	char regNo[12] = {'\0'};
-	string delete_course_code, codeList[100], nameList[100], stdNameList[100], stdRegNoList[100], stdCourseList[100][100];
+	string delete_course_code, codeList[100], nameList[100], stdNameList[100], stdRegNoList[100], stdCourseList[100][100], reg_no, courseCode;
 	int a = 1, crtHrsList[100], semList[100];
+
+	for (int i = 0; i < 100; i++)
+	{
+		for (int j = 0; j < 100; j++)
+		{
+			stdCourseList[i][j] = "\0";
+		}
+	}
 	for (int x = 0; x < 100; x++)
 	{
 		semList[x] = 0;
@@ -674,7 +750,7 @@ int main()
 					return 0;
 				}
 			}
-
+			a = 1;
 			check_user = loadUsers(usersList, passwordsList);
 		} while (check_user == 0);
 
@@ -697,9 +773,9 @@ int main()
 			cout << "6	Add Student" << endl;
 			cout << "7	Update Student" << endl;
 			cout << "8	Delete Student" << endl;
-			cout << "9 	View All students" << endl;
-			cout << "10	Register the course for student" << endl;
-			cout << "11	Unregister the course for student" << endl;
+			cout << "9 	Register the course for student" << endl;
+			cout << "10	Unregister the course for student" << endl;
+			cout << "11	View All students" << endl;
 			cout << "12	Logout of the system" << endl
 				 << "13	Exit Program" << endl
 				 << endl;
@@ -847,7 +923,6 @@ int main()
 				}
 
 				addStudent(stdNameList, stdRegNoList, studentName, regNo);
-
 				break;
 			}
 
@@ -856,7 +931,7 @@ int main()
 				cout << "Enter the registration number of the student to edit: ";
 				cin >> edit_reNo;
 
-				if (index_reg_code(stdRegNoList, edit_reNo) == 0)
+				if (index_reg_code(stdRegNoList, edit_reNo) == -1)
 				{
 					cout << "\nThere is no student by this registration number. \n";
 				}
@@ -868,6 +943,31 @@ int main()
 					updateStudent(stdNameList, stdRegNoList, studentName, regNo);
 				}
 
+				break;
+			}
+
+			case 8:
+			{
+				break;
+			}
+
+			case 9:
+			{
+
+				cout << "Enter registration Number of the student for course registration: ";
+				cin >> reg_no;
+				cout << endl;
+				if (index_reg_code(stdRegNoList, reg_no) == -1)
+				{
+					cout << "There is no student by this registration number.\n ";
+				}
+				else
+				{
+					cout << "Enter the Course Code to register: ";
+					cin >> courseCode;
+					cout << endl;
+					registerCourse(stdRegNoList, stdCourseList, codeList, reg_no, courseCode);
+				}
 				break;
 			}
 
