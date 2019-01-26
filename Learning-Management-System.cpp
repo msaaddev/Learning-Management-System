@@ -122,18 +122,15 @@ int max_index_regNo(string stdRegNoList[])
 
 //this statement will declare edit_course and delete course for the whole program
 string edit_course_code;
-int flag = 0, counter = 0, counter2, flag2 = 0, counter3, flag3 = 0, counter4;
-
+int flag = 0, counter = 0, counter2, flag2 = 0, counter3, flag3 = 0, counter4, check_1 = 0;
+int var;
 // this function will add course name, credit hours, semester and course code to nameList, crtHrsList, semList, codeList respectively
 void AddCourse(string codeList[], string nameList[], int crtHrsList[], int semList[], char course_code[], int credit_hours, int semester, char course_name[])
 {
-	ifstream op;
-	op.open("AddCourse_Counter.txt");
-	int var;
-	op >> var;
-	op.close();
+
 	static int n = var + 1;
 	static int c = 0;
+	int b = 0;
 
 	if (isValidSemester(semester) == 1 && isValidCourseCode(course_code) == 1 && isValidCreditHours(credit_hours) == 1 && isValidCourseName(course_name) == 1)
 	{
@@ -141,7 +138,7 @@ void AddCourse(string codeList[], string nameList[], int crtHrsList[], int semLi
 		if (flag == 1)
 		{
 			// when a course is deleted, addCourse function will use this logic to add course details
-			int b = counter;
+			b = counter;
 			codeList[b] = course_code;
 			crtHrsList[b] = credit_hours;
 			semList[b] = semester;
@@ -185,11 +182,22 @@ void AddCourse(string codeList[], string nameList[], int crtHrsList[], int semLi
 	if (var == 0)
 	{
 		counter2 = c;
+		check_1 = 1;
 	}
 	else
 	{
 		counter2 = n;
+		check_1 = 1;
 	}
+	if (flag == 2)
+	{
+		counter2 = b;
+		check_1 = 1;
+	}
+	ofstream counter;
+	counter.open("AddCourse_Counter.txt");
+	counter << counter2 - 1;
+	counter.close();
 }
 
 //this function will check whether the course code which we want to edit is in the program.
@@ -667,24 +675,46 @@ bool isValidStudentName(char studentName[])
 	return value;
 }
 
+int var4, var6;
 //this function will addstudent in an stdNameList
 void addStudent(string stdNameList[], string stdRegNoList[], char studentName[], char regNo[])
 {
 	static int variable = 0;
+	int a = counter3;
+	int b = counter3;
+	int an_flag = 0;
+	static int n = var6;
+
 	if (isValidRegistrationNumber(regNo) == 1 && isValidStudentName(studentName) == 1)
 	{
-		int b = counter3;
 		if (flag2 == 1)
 		{
-			int a = counter3;
+			//when a student is deleted, addStudent function will use this logic to add student
+
 			stdNameList[a] = studentName;
 			stdRegNoList[a] = regNo;
 			cout << "\nStudent has been added successfully" << endl;
 			a++;
 			flag2 = 2;
 		}
+		else if (var6 != 0)
+		{
+			if (flag2 == 2)
+			{
+				n = counter3 + 1;
+				flag2 = 0;
+			}
+
+			stdNameList[n] = studentName;
+			stdRegNoList[n] = regNo;
+			cout << endl
+				 << stdNameList[n] << " " << stdRegNoList[n] << endl;
+			n++;
+			cout << "\nStudent has been added successfully" << endl;
+		}
 		else
 		{
+			//when we have to add students in the memory
 			if (flag2 == 2)
 			{
 				variable = counter3 + 1;
@@ -693,13 +723,33 @@ void addStudent(string stdNameList[], string stdRegNoList[], char studentName[],
 
 			stdNameList[variable] = studentName;
 			stdRegNoList[variable] = regNo;
+			cout << endl
+				 << stdNameList[variable] << " " << stdRegNoList[variable] << endl;
 			variable++;
 			cout << "\nStudent has been added successfully" << endl;
 		}
 	}
+
+	if (var6 != 0)
+	{
+		var4 = n;
+		ofstream OUTDATA;
+		OUTDATA.open("AddStudent_counter.txt");
+		OUTDATA << n;
+		OUTDATA.close();
+	}
+	else
+	{
+		var4 = variable;
+		ofstream OUTDATA;
+		OUTDATA.open("AddStudent_counter.txt");
+		OUTDATA << variable;
+		OUTDATA.close();
+	}
 }
 
 string edit_reNo;
+
 //this function will edit the student in the list
 void updateStudent(string stdNameList[], string stdRegNoList[], char studentName[], char regNo[])
 {
@@ -712,6 +762,7 @@ void updateStudent(string stdNameList[], string stdRegNoList[], char studentName
 	}
 }
 
+int var7;
 //this function will register courses for the student
 void registerCourse(string stdRegNoList[], string stdCourseList[][100], string codeList[], string reg_No, string courseCode)
 {
@@ -722,36 +773,81 @@ void registerCourse(string stdRegNoList[], string stdCourseList[][100], string c
 
 	else
 	{
+		static int n = var7;
+		cout << endl
+			 << "value of n: " << n;
+
 		//when we add courses in new student registration number in stdCourseList
 		if (index_stdCourseList(stdCourseList, reg_No) == -1)
 		{
+			//this condition will be used to add courses in the index of deleted courses
 			if (flag3)
 			{
-
 				stdCourseList[counter4][0] = reg_No;
 				stdCourseList[counter4][1] = courseCode;
 				flag3 = 0;
 			}
+
 			else
 			{
-				static int x = 0;
-				int y = 0;
-				stdCourseList[x][y] = reg_No;
-				y++;
-				stdCourseList[x][y] = courseCode;
-				x++;
+				cout << "\nyo3\n";
+
+				if (var7 != 0)
+				{
+					static int x = n;
+					int y = 0;
+					stdCourseList[x][y] = reg_No;
+					y++;
+					stdCourseList[x][y] = courseCode;
+					x++;
+				}
+				else
+				{
+					static int x = 0;
+					int y = 0;
+					stdCourseList[x][y] = reg_No;
+					y++;
+					stdCourseList[x][y] = courseCode;
+					x++;
+				}
 			}
 		}
-
-		//when we add courses in exisiting student registration number
+		else if (var7 != 0)
+		{
+			int variable = index_stdCourseList(stdCourseList, reg_No);
+			if (variable != -1 && index_row(stdCourseList, reg_No) == 1)
+			{
+				cout << "\nyo\n";
+				stdCourseList[variable][1] = courseCode;
+			}
+			else if (variable != -1 && index_row(stdCourseList, reg_No) != 1)
+			{
+				cout << "\nyo1\n";
+				int y = index_row(stdCourseList, reg_No);
+				stdCourseList[variable][y] = courseCode;
+			}
+			else
+			{
+				cout << "\nYO2\n";
+				stdCourseList[n][0] = reg_No;
+				stdCourseList[n][1] = courseCode;
+				n++;
+			}
+		}
+		//when we add courses in existing student registration number
 		else
 		{
 			int variable = index_stdCourseList(stdCourseList, reg_No);
 			int y = index_row(stdCourseList, reg_No);
 			stdCourseList[variable][y] = courseCode;
 		}
+
 		cout << endl
 			 << "Course has been registered for the student." << endl;
+		cout << stdCourseList[0][0] << " " << stdCourseList[0][1] << " " << stdCourseList[0][2] << " " << stdCourseList[0][3] << endl;
+		cout << stdCourseList[1][0] << " " << stdCourseList[1][1] << " " << stdCourseList[1][2] << " " << stdCourseList[1][3] << endl;
+		cout << stdCourseList[2][0] << " " << stdCourseList[2][1] << " " << stdCourseList[2][2] << " " << stdCourseList[2][3] << endl;
+		cout << stdCourseList[3][0] << " " << stdCourseList[3][1] << " " << stdCourseList[3][2] << " " << stdCourseList[3][3] << endl;
 	}
 }
 
@@ -771,10 +867,10 @@ void deleteStudent(string stdNameList[], string stdRegNoList[], string stdCourse
 	flag2 = 1;
 	counter3 = variable2;
 
+	//this condition will delete student reg number and his/her registered courses from the stdCourseList
 	if (index_stdCourseList(stdCourseList, reg_no) == -1)
 	{
 	}
-
 	else
 	{
 		int variable3 = index_stdCourseList(stdCourseList, reg_no);
@@ -787,6 +883,7 @@ void deleteStudent(string stdNameList[], string stdRegNoList[], string stdCourse
 			flag3 = 1;
 		}
 	}
+
 	cout << endl
 		 << "Student has been deleted successfully" << endl;
 }
@@ -826,13 +923,157 @@ void unRegisterCourse(string stdRegNoList[], string stdCourseList[][100], string
 void viewstudents(string stdRegNoList[], string stdNameList[])
 {
 	cout << left;
-	cout << setw(31) << "\tStudent Name"
+	cout << setw(30) << "\t Student Name"
 		 << "Registration Number" << endl;
 	for (int x = 0; stdRegNoList[x] != "\0"; x++)
 	{
 		cout << left;
-		cout << "\t" << setw(30) << stdNameList[x] << stdRegNoList[x] << endl;
+		cout << "\t" << setw(29) << stdNameList[x] << stdRegNoList[x] << endl;
 	}
+}
+
+//this function will return the index where details of the registration number are placed in 2D array
+int index_cou_code(string stdCourseList[][100], string edit_reNo)
+{
+	int index = -1;
+	for (int x = 0; x < 100; x++)
+	{
+		if (stdCourseList[x][0] == edit_reNo)
+		{
+			index = x;
+			break;
+		}
+	}
+	return index;
+}
+
+//this function will save students in an external file
+void saveStudents(string stdRegNoList[], string stdNameList[], string stdCourseList[][100])
+{
+	ofstream outdata;
+	outdata.open("Students.txt");
+	for (int x = 0; stdRegNoList[x] != "\0"; x++)
+	{
+		string f = stdRegNoList[x];
+		outdata << stdRegNoList[x] << "," << stdNameList[x] << endl;
+
+		if (index_cou_code(stdCourseList, f) == -1)
+		{
+			outdata << endl;
+		}
+		else
+		{
+			int j = index_cou_code(stdCourseList, f);
+			for (int i = 1; stdCourseList[j][i] != "\0"; i++)
+			{
+				outdata << stdCourseList[j][i];
+				if (stdCourseList[j][i + 1] != "\0")
+				{
+					outdata << ",";
+				}
+			}
+			outdata << endl;
+		}
+	}
+	outdata.close();
+}
+
+//this function will load the students in the external file in the memory
+void loadsStudents(string stdRegNoList[], string stdNameList[], string stdCourseList[][100])
+{
+
+	ifstream check, op;
+	check.open("check_for_student.txt");
+	int a, value1 = 0;
+	check >> a;
+	check.close();
+
+	if (a == 1)
+	{
+		value1 = 1;
+	}
+
+	op.open("AddStudent_counter.txt");
+	int var5;
+	op >> var5;
+	op.close();
+
+	int x = 0, y = 0, counter = 0;
+	string data;
+
+	ifstream inData;
+	inData.open("Students.txt");
+
+	while (value1 == 1)
+	{
+		char stdregno[12] = {'\0'}, stdname[50] = {'\0'}, courses[6] = {'\0'};
+		getline(inData, data);
+
+		while (data[x] != ',')
+		{
+			stdregno[y] = data[x];
+			y++;
+			x++;
+		}
+
+		stdRegNoList[counter] = stdregno;
+		x++;
+		y = 0;
+
+		while (data[x] != '\0')
+		{
+			stdname[y] = data[x];
+			x++;
+			y++;
+		}
+
+		stdNameList[counter] = stdname;
+		stdCourseList[counter][0] = stdRegNoList[counter];
+
+		cout << endl
+			 << stdCourseList[counter][0] << endl;
+
+		getline(inData, data);
+		x = 0;
+		y = 0;
+		int j = 1;
+		while (data[x] != '\0')
+		{
+			y = 0;
+			while (data[x] != ',' && data[x + 1] != '\0')
+			{
+				courses[y] = data[x];
+				x++;
+				y++;
+				if (data[x + 1] == '\0')
+				{
+					courses[y] = data[x];
+				}
+			}
+			x++;
+			stdCourseList[counter][j] = courses;
+			cout << stdCourseList[counter][j] << " ";
+			j++;
+		}
+
+		cout << endl
+			 << "yO" << endl;
+
+		cout << stdCourseList[0][0] << " " << stdCourseList[0][1] << " " << stdCourseList[0][2] << " " << stdCourseList[0][3] << endl;
+		cout << stdCourseList[1][0] << " " << stdCourseList[1][1] << " " << stdCourseList[1][2] << " " << stdCourseList[1][3] << endl;
+		cout << stdCourseList[2][0] << " " << stdCourseList[2][1] << " " << stdCourseList[2][2] << " " << stdCourseList[2][3] << endl;
+		cout << stdCourseList[3][0] << " " << stdCourseList[3][1] << " " << stdCourseList[3][2] << " " << stdCourseList[3][3] << endl;
+
+		x = 0;
+		y = 0;
+		counter++;
+
+		if (counter == var5)
+		{
+			break;
+		}
+	}
+	inData.close();
 }
 
 int main()
@@ -842,7 +1083,27 @@ int main()
 	char course_code[6], course_name[50], usersList[1000] = {'\0'}, passwordsList[1000] = {'\0'}, studentName[100] = {'\0'};
 	char regNo[12] = {'\0'};
 	string delete_course_code, codeList[100], nameList[100], stdNameList[100], stdRegNoList[100] = {"\0"}, stdCourseList[100][100], reg_no, courseCode;
-	int a = 1, crtHrsList[100], semList[100];
+	int a = 1, crtHrsList[100], semList[100], c = 0, another_var;
+
+	ifstream file;
+	file.open("check_for_student.txt");
+	file >> another_var;
+	file.close();
+
+	ifstream op;
+	op.open("AddCourse_Counter.txt");
+	op >> var;
+	op.close();
+
+	ifstream opi;
+	opi.open("AddStudent_counter.txt");
+	opi >> var6;
+	opi.close();
+
+	ifstream opid;
+	opid.open("AddStudent_counter.txt");
+	opid >> var7;
+	opid.close();
 
 	for (int i = 0; i < 100; i++)
 	{
@@ -851,6 +1112,12 @@ int main()
 			stdCourseList[i][j] = "\0";
 		}
 	}
+
+	if (another_var)
+	{
+		loadsStudents(stdRegNoList, stdNameList, stdCourseList);
+	}
+
 	for (int x = 0; x < 100; x++)
 	{
 		semList[x] = 0;
@@ -858,6 +1125,10 @@ int main()
 	}
 
 	int load = loadCourses(codeList, nameList, crtHrsList, semList);
+	if (load)
+	{
+		check_1 = 1;
+	}
 
 	while (loop == 0)
 	{
@@ -892,6 +1163,21 @@ int main()
 			 << "You have successfully logged in in your LMS account." << endl;
 		while (a)
 		{
+			if (flag2 == 1)
+			{
+				ofstream OUTDATA;
+				OUTDATA.open("AddStudent_counter.txt");
+				OUTDATA << var4 - 1;
+				OUTDATA.close();
+			}
+
+			if (flag == 1)
+			{
+				ofstream counter;
+				counter.open("AddCourse_Counter.txt");
+				counter << counter2 - 2;
+				counter.close();
+			}
 
 			cout << endl;
 			cout << "Choose the following option: " << endl;
@@ -1151,18 +1437,48 @@ int main()
 			case 13:
 			{
 				a = 0;
-				int a = saveCourses(codeList, nameList, crtHrsList, semList, semester);
-				ofstream b;
-				b.open("check_for_loadCourses.txt");
 
-				int c = 1;
-				b << c;
-				b.close();
+				/*this condition will check save 1 in an external file if there are courses stored in another external file.
+				it also save addcourse counter in the external file*/
 
-				ofstream counter;
-				counter.open("AddCourse_Counter.txt");
-				counter << counter2 - 1;
-				counter.close();
+				if (check_1)
+				{
+					int var1 = saveCourses(codeList, nameList, crtHrsList, semList, semester);
+
+					if (codeList[0] != "\0")
+					{
+						ofstream b;
+						b.open("check_for_loadCourses.txt");
+						c = 1;
+						b << c;
+						b.close();
+					}
+					else
+					{
+						ofstream b;
+						b.open("check_for_loadCourses.txt");
+						c = 0;
+						b << c;
+						b.close();
+					}
+				}
+
+				//this condition will check whether any student has been entered or not
+				if (stdRegNoList[0] != "\0")
+				{
+					ofstream file;
+					file.open("check_for_student.txt");
+					file << "1";
+					file.close();
+				}
+				else
+				{
+					ofstream file;
+					file.open("check_for_student.txt");
+					file << "0";
+					file.close();
+				}
+				saveStudents(stdRegNoList, stdNameList, stdCourseList);
 				break;
 			}
 
@@ -1174,13 +1490,9 @@ int main()
 			}
 
 			cout << endl;
-			cout << "**************************************************************************************";
+			cout << "                    *********************************************************************";
 			cout << endl;
 		}
 	}
-	ofstream counter;
-	counter.open("AddCourse_Counter.txt");
-	counter << counter2 - 1;
-	counter.close();
 	return 0;
 }
