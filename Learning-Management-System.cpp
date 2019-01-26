@@ -707,8 +707,6 @@ void addStudent(string stdNameList[], string stdRegNoList[], char studentName[],
 
 			stdNameList[n] = studentName;
 			stdRegNoList[n] = regNo;
-			cout << endl
-				 << stdNameList[n] << " " << stdRegNoList[n] << endl;
 			n++;
 			cout << "\nStudent has been added successfully" << endl;
 		}
@@ -723,8 +721,6 @@ void addStudent(string stdNameList[], string stdRegNoList[], char studentName[],
 
 			stdNameList[variable] = studentName;
 			stdRegNoList[variable] = regNo;
-			cout << endl
-				 << stdNameList[variable] << " " << stdRegNoList[variable] << endl;
 			variable++;
 			cout << "\nStudent has been added successfully" << endl;
 		}
@@ -774,8 +770,6 @@ void registerCourse(string stdRegNoList[], string stdCourseList[][100], string c
 	else
 	{
 		static int n = var7;
-		cout << endl
-			 << "value of n: " << n;
 
 		//when we add courses in new student registration number in stdCourseList
 		if (index_stdCourseList(stdCourseList, reg_No) == -1)
@@ -790,8 +784,6 @@ void registerCourse(string stdRegNoList[], string stdCourseList[][100], string c
 
 			else
 			{
-				cout << "\nyo3\n";
-
 				if (var7 != 0)
 				{
 					static int x = n;
@@ -817,18 +809,15 @@ void registerCourse(string stdRegNoList[], string stdCourseList[][100], string c
 			int variable = index_stdCourseList(stdCourseList, reg_No);
 			if (variable != -1 && index_row(stdCourseList, reg_No) == 1)
 			{
-				cout << "\nyo\n";
 				stdCourseList[variable][1] = courseCode;
 			}
 			else if (variable != -1 && index_row(stdCourseList, reg_No) != 1)
 			{
-				cout << "\nyo1\n";
 				int y = index_row(stdCourseList, reg_No);
 				stdCourseList[variable][y] = courseCode;
 			}
 			else
 			{
-				cout << "\nYO2\n";
 				stdCourseList[n][0] = reg_No;
 				stdCourseList[n][1] = courseCode;
 				n++;
@@ -842,12 +831,7 @@ void registerCourse(string stdRegNoList[], string stdCourseList[][100], string c
 			stdCourseList[variable][y] = courseCode;
 		}
 
-		cout << endl
-			 << "Course has been registered for the student." << endl;
-		cout << stdCourseList[0][0] << " " << stdCourseList[0][1] << " " << stdCourseList[0][2] << " " << stdCourseList[0][3] << endl;
-		cout << stdCourseList[1][0] << " " << stdCourseList[1][1] << " " << stdCourseList[1][2] << " " << stdCourseList[1][3] << endl;
-		cout << stdCourseList[2][0] << " " << stdCourseList[2][1] << " " << stdCourseList[2][2] << " " << stdCourseList[2][3] << endl;
-		cout << stdCourseList[3][0] << " " << stdCourseList[3][1] << " " << stdCourseList[3][2] << " " << stdCourseList[3][3] << endl;
+		cout << "Course has been registered for the student." << endl;
 	}
 }
 
@@ -947,6 +931,38 @@ int index_cou_code(string stdCourseList[][100], string edit_reNo)
 	return index;
 }
 
+//this function will calculate the length of the name
+int length_of_name(string studentName)
+{
+	int e = 0, y = 0;
+	while (studentName[e] != '\0')
+	{
+		y++;
+		e++;
+	}
+	return --y;
+}
+
+ofstream DATA;
+//this function will save student credentials in an external file
+void std_cre(string stdNameList[], string stdRegNoList[])
+{
+	DATA.open("students_credentails.txt");
+	int x = 0;
+
+	while (stdRegNoList[x] != "\0")
+	{
+		string studentName, regNo;
+		studentName = stdNameList[x];
+		regNo = stdRegNoList[x];
+		int b = length_of_name(studentName);
+		DATA << studentName[b - 2] << studentName[b - 1] << studentName[b] << ",";
+		DATA << regNo << endl;
+		x++;
+	}
+	DATA.close();
+}
+
 //this function will save students in an external file
 void saveStudents(string stdRegNoList[], string stdNameList[], string stdCourseList[][100])
 {
@@ -1030,9 +1046,6 @@ void loadsStudents(string stdRegNoList[], string stdNameList[], string stdCourse
 		stdNameList[counter] = stdname;
 		stdCourseList[counter][0] = stdRegNoList[counter];
 
-		cout << endl
-			 << stdCourseList[counter][0] << endl;
-
 		getline(inData, data);
 		x = 0;
 		y = 0;
@@ -1052,17 +1065,8 @@ void loadsStudents(string stdRegNoList[], string stdNameList[], string stdCourse
 			}
 			x++;
 			stdCourseList[counter][j] = courses;
-			cout << stdCourseList[counter][j] << " ";
 			j++;
 		}
-
-		cout << endl
-			 << "yO" << endl;
-
-		cout << stdCourseList[0][0] << " " << stdCourseList[0][1] << " " << stdCourseList[0][2] << " " << stdCourseList[0][3] << endl;
-		cout << stdCourseList[1][0] << " " << stdCourseList[1][1] << " " << stdCourseList[1][2] << " " << stdCourseList[1][3] << endl;
-		cout << stdCourseList[2][0] << " " << stdCourseList[2][1] << " " << stdCourseList[2][2] << " " << stdCourseList[2][3] << endl;
-		cout << stdCourseList[3][0] << " " << stdCourseList[3][1] << " " << stdCourseList[3][2] << " " << stdCourseList[3][3] << endl;
 
 		x = 0;
 		y = 0;
@@ -1076,10 +1080,58 @@ void loadsStudents(string stdRegNoList[], string stdNameList[], string stdCourse
 	inData.close();
 }
 
+//this function will check student credentials
+bool loadstd(string registration_no, string password)
+{
+	ifstream DAta;
+	DAta.open("students_credentails.txt");
+	int a = 1;
+	string cred;
+	char pas[4] = {'\0'}, regno[12] = {'\0'};
+
+	while (a)
+	{
+		getline(DAta, cred);
+		if (cred == "\0")
+		{
+			break;
+		}
+		int x = 0;
+
+		while (cred[x] != ',')
+		{
+			pas[x] = cred[x];
+			x++;
+		}
+		x++;
+		int y = 0;
+		while (cred[x] != '\0')
+		{
+			regno[y] = cred[x];
+			y++;
+			x++;
+		}
+		if (registration_no == regno && password == pas)
+		{
+			break;
+		}
+	}
+	DAta.close();
+
+	if (registration_no == regno && password == pas)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 int main()
 {
-
-	int option, credit_hours, semester, check_user = 1, loop = 0, tab = 0;
+	system("CLS");
+	int option, credit_hours, semester, check_user = 1, check_st = 1, loop = 0, tab = 0, option_1;
 	char course_code[6], course_name[50], usersList[1000] = {'\0'}, passwordsList[1000] = {'\0'}, studentName[100] = {'\0'};
 	char regNo[12] = {'\0'};
 	string delete_course_code, codeList[100], nameList[100], stdNameList[100], stdRegNoList[100] = {"\0"}, stdCourseList[100][100], reg_no, courseCode;
@@ -1130,369 +1182,538 @@ int main()
 		check_1 = 1;
 	}
 
-	while (loop == 0)
+	int it = 1;
+
+	cout << "			    ** Welcome to University Learning Management System ** \n";
+	cout << endl
+		 << "Dear user, current software is intended for authorized users only. \nLogin to the system to get access";
+	cout << endl;
+	cout << endl;
+
+	while (it)
 	{
-		cout << "			    ** Welcome to University Learning Management System ** \n";
+		cout << "Choose the option for login\n";
 		cout << endl
-			 << "Dear user, current software is intended for authorized users only. \nLogin to the system to get access";
-		cout << endl;
-		cout << endl;
-		do
-		{
-			if (check_user == 0)
-			{
-				char dec;
-				cout << "\nDear User, username/password is incorrect. Enter the username/password again \nto get access to the system" << endl
-					 << endl;
-				cout << "Do you want to end the program? Please enter 'Y' for yes and 'N' for no: ";
-				cin >> dec;
-				cout << endl;
-				if (dec == 'Y')
-				{
-					return 0;
-				}
-			}
-			a = 1;
-			check_user = loadUsers(usersList, passwordsList);
-		} while (check_user == 0);
-
-		loop = check_user;
-
-		system("CLS");
+			 << "Press 1 for Admin access." << endl;
+		cout << "Press 2 for Student access." << endl;
+		cout << "Press 3 to Exit." << endl;
 		cout << endl
-			 << "You have successfully logged in in your LMS account." << endl;
-		while (a)
+			 << "Option: ";
+		cin >> option_1;
+
+		if (cin.fail())
 		{
-			if (flag2 == 1)
+			cout << "\nProgram has been exited.\n";
+			return 0;
+		}
+
+		switch (option_1)
+		{
+
+		//admin access
+		case 1:
+		{
+			system("CLS");
+			while (loop == 0)
 			{
-				ofstream OUTDATA;
-				OUTDATA.open("AddStudent_counter.txt");
-				OUTDATA << var4 - 1;
-				OUTDATA.close();
-			}
-
-			if (flag == 1)
-			{
-				ofstream counter;
-				counter.open("AddCourse_Counter.txt");
-				counter << counter2 - 2;
-				counter.close();
-			}
-
-			cout << endl;
-			cout << "Choose the following option: " << endl;
-			cout << endl
-				 << "1 	Add Course" << endl;
-			cout << "2	Update Course" << endl;
-			cout << "3	Delete Course" << endl;
-			cout << "4 	View All Courses" << endl;
-			cout << "5	View Courses of a Semester" << endl;
-			cout << "6	Add Student" << endl;
-			cout << "7	Update Student" << endl;
-			cout << "8	Delete Student" << endl;
-			cout << "9 	Register the course for student" << endl;
-			cout << "10	Unregister the course for student" << endl;
-			cout << "11	View All students" << endl;
-			cout << "12	Logout of the system" << endl
-				 << "13	Exit Program" << endl
-				 << endl;
-
-			cout << "Choose the option: ";
-			cin >> option;
-			cout << endl;
-
-			if (cin.fail())
-			{
-				option = 13;
-			}
-			switch (option)
-			{
-
-			//Add courses
-			case 1:
-			{
-				cout << "Enter the details of the course: ";
-				cin >> course_code >> credit_hours >> semester;
-				cin.get(course_name, 100);
-
-				while (isValidCourseCode(course_code) == 0)
-				{
-					cout << endl
-						 << "Invalid Course Code\n";
-					cout << "Enter Course Code again: ";
-					cin >> course_code;
-				}
-				while (isValidCreditHours(credit_hours) == 0)
-				{
-					cout << endl
-						 << "Invalid Credit hours" << endl;
-					cout << "Enter Credit hours again: ";
-					cin >> credit_hours;
-				}
-				while (isValidSemester(semester) == 0)
-				{
-					cout << endl
-						 << "Invalid Semester\n";
-					cout << "Enter semester again: ";
-					cin >> semester;
-				}
-
-				if (isValidCourseName(course_name) == 0)
-				{
-					cout << endl
-						 << "Invalid Course Name\n";
-				}
-
-				AddCourse(codeList, nameList, crtHrsList, semList, course_code, credit_hours, semester, course_name);
-
-				break;
-			}
-
-			//Edit Course
-			case 2:
-			{
-				cout << "Enter the course code to edit: ";
-				cin >> edit_course_code;
+				cout << "			    ** Welcome to University Learning Management System ** \n";
+				cout << endl
+					 << "Dear user, current software is intended for authorized users only. \nLogin to the system to get access";
 				cout << endl;
-				if (check_course_code(codeList, edit_course_code) == 0)
-				{
-					cout << endl
-						 << "This is no course by this course code";
-				}
-				else
-				{
-
-					EditCourse(codeList, nameList, crtHrsList, semList, course_code, credit_hours, semester, course_name);
-				}
-
-				break;
-			}
-
-			//Delete Course
-			case 3:
-			{
-				cout << "Enter course code of the course which you want to delete: ";
-				cin >> delete_course_code;
-
-				if (check_course_code(codeList, delete_course_code) == 0)
-				{
-					cout << endl
-						 << "This is no course by this course code";
-				}
-				else
-				{
-
-					DeleteCourse(codeList, nameList, crtHrsList, semList, delete_course_code);
-				}
-				break;
-			}
-
-			//View all courses
-			case 4:
-			{
-				int size = max_index(semList);
-
-				if (size == -1)
-				{
-					cout << endl
-						 << "There is no course to display. Please add courses first.\n";
-				}
-				else
-				{
-					ViewCourses(codeList, nameList, crtHrsList, semList);
-				}
-				break;
-			}
-
-			//View courses by semester
-			case 5:
-			{
-				int size = max_index(semList);
-
-				if (size == -1)
-				{
-					cout << endl
-						 << "There is no course to display. Please add courses first.\n";
-				}
-				else
-				{
-					ViewSemesterCourse(codeList, nameList, crtHrsList, semList, semester);
-				}
-				break;
-			}
-
-			case 6:
-			{
-
-				cout << "Enter the details of the student: ";
-				cin >> regNo;
-				cin.get(studentName, 100);
-
-				if (isValidRegistrationNumber(regNo) == 0)
-				{
-					cout << endl
-						 << "Invalid Registration number. Couldn't add the student" << endl;
-				}
-				if (isValidStudentName(studentName) == 0)
-				{
-					cout << endl
-						 << "Invalid Student Name. Couldn't add the student" << endl;
-				}
-
-				addStudent(stdNameList, stdRegNoList, studentName, regNo);
-				break;
-			}
-
-			case 7:
-			{
-				cout << "Enter the registration number of the student to edit: ";
-				cin >> edit_reNo;
-
-				if (index_reg_code(stdRegNoList, edit_reNo) == -1)
-				{
-					cout << "\nThere is no student by this registration number. \n";
-				}
-				else
-				{
-					cout << "Enter new details of the student: ";
-					cin >> regNo;
-					cin.get(studentName, 100);
-					updateStudent(stdNameList, stdRegNoList, studentName, regNo);
-				}
-
-				break;
-			}
-
-			case 8:
-			{
-				cout << "Enter Registration number of the student to delete: ";
-				cin >> reg_no;
 				cout << endl;
-				if (index_reg_code(stdRegNoList, reg_no) == -1)
+				do
 				{
-					cout << "There is no student by this registration number.\n ";
-				}
+					if (check_user == 0)
+					{
+						char dec;
+						cout << "\nDear User, username/password is incorrect. Enter the username/password again \nto get access to the system" << endl
+							 << endl;
+						cout << "Do you want to end the program? Please enter 'Y' for yes and 'N' for no: ";
+						cin >> dec;
+						cout << endl;
+						if (dec == 'Y' || dec == 'y')
+						{
+							return 0;
+						}
+					}
+					a = 1;
+					check_user = loadUsers(usersList, passwordsList);
+				} while (check_user == 0);
 
-				else
-				{
-					deleteStudent(stdNameList, stdRegNoList, stdCourseList, reg_no);
-				}
-				break;
-			}
+				loop = check_user;
 
-			case 9:
-			{
-
-				cout << "Enter registration Number of the student for course registration: ";
-				cin >> reg_no;
-				cout << endl;
-				if (index_reg_code(stdRegNoList, reg_no) == -1)
-				{
-					cout << "There is no student by this registration number.\n ";
-				}
-				else
-				{
-					cout << "Enter the Course Code to register: ";
-					cin >> courseCode;
-					cout << endl;
-					registerCourse(stdRegNoList, stdCourseList, codeList, reg_no, courseCode);
-				}
-				break;
-			}
-
-			case 10:
-			{
-				cout << "Enter registration number of the student: ";
-				cin >> reg_no;
-				if (index_reg_code(stdRegNoList, reg_no) == -1)
-				{
-					cout << "There is no student by this registration number.\n ";
-				}
-
-				else
-				{
-					cout << "Enter course code to unregister: ";
-					cin >> courseCode;
-					unRegisterCourse(stdRegNoList, stdCourseList, reg_no, courseCode);
-				}
-				break;
-			}
-
-			case 11:
-			{
-				viewstudents(stdRegNoList, stdNameList);
-				break;
-			}
-
-			//logout from the account
-			case 12:
-			{
 				system("CLS");
-				loop = 0;
-				a = 0;
-				break;
-			}
+				cout << endl
+					 << "You have successfully logged in in your LMS account." << endl;
+				while (a)
+				{
 
-			//Exit the program
-			case 13:
-			{
-				a = 0;
+					cout << endl;
+					cout << "Choose the following option: " << endl;
+					cout << endl
+						 << "1 	Add Course" << endl;
+					cout << "2	Update Course" << endl;
+					cout << "3	Delete Course" << endl;
+					cout << "4 	View All Courses" << endl;
+					cout << "5	View Courses of a Semester" << endl;
+					cout << "6	Add Student" << endl;
+					cout << "7	Update Student" << endl;
+					cout << "8	Delete Student" << endl;
+					cout << "9 	Register the course for student" << endl;
+					cout << "10	Unregister the course for student" << endl;
+					cout << "11	View All students" << endl;
+					cout << "12	Logout of the system" << endl
+						 << "13	Exit Program" << endl
+						 << endl;
 
-				/*this condition will check save 1 in an external file if there are courses stored in another external file.
+					cout << "Choose the option: ";
+					cin >> option;
+					cout << endl;
+
+					if (cin.fail())
+					{
+						option = 13;
+					}
+					switch (option)
+					{
+
+					//Add courses
+					case 1:
+					{
+						cout << "Enter the details of the course: ";
+						cin >> course_code >> credit_hours >> semester;
+						cin.get(course_name, 100);
+
+						while (isValidCourseCode(course_code) == 0)
+						{
+							cout << endl
+								 << "Invalid Course Code\n";
+							cout << "Enter Course Code again: ";
+							cin >> course_code;
+						}
+						while (isValidCreditHours(credit_hours) == 0)
+						{
+							cout << endl
+								 << "Invalid Credit hours" << endl;
+							cout << "Enter Credit hours again: ";
+							cin >> credit_hours;
+						}
+						while (isValidSemester(semester) == 0)
+						{
+							cout << endl
+								 << "Invalid Semester\n";
+							cout << "Enter semester again: ";
+							cin >> semester;
+						}
+
+						if (isValidCourseName(course_name) == 0)
+						{
+							cout << endl
+								 << "Invalid Course Name\n";
+						}
+
+						AddCourse(codeList, nameList, crtHrsList, semList, course_code, credit_hours, semester, course_name);
+
+						break;
+					}
+
+					//Edit Course
+					case 2:
+					{
+						cout << "Enter the course code to edit: ";
+						cin >> edit_course_code;
+						cout << endl;
+						if (check_course_code(codeList, edit_course_code) == 0)
+						{
+							cout << endl
+								 << "This is no course by this course code";
+						}
+						else
+						{
+
+							EditCourse(codeList, nameList, crtHrsList, semList, course_code, credit_hours, semester, course_name);
+						}
+
+						break;
+					}
+
+					//Delete Course
+					case 3:
+					{
+						cout << "Enter course code of the course which you want to delete: ";
+						cin >> delete_course_code;
+
+						if (check_course_code(codeList, delete_course_code) == 0)
+						{
+							cout << endl
+								 << "This is no course by this course code";
+						}
+						else
+						{
+
+							DeleteCourse(codeList, nameList, crtHrsList, semList, delete_course_code);
+						}
+						break;
+					}
+
+					//View all courses
+					case 4:
+					{
+						int size = max_index(semList);
+
+						if (size == -1)
+						{
+							cout << endl
+								 << "There is no course to display. Please add courses first.\n";
+						}
+						else
+						{
+							ViewCourses(codeList, nameList, crtHrsList, semList);
+						}
+						break;
+					}
+
+					//View courses by semester
+					case 5:
+					{
+						int size = max_index(semList);
+
+						if (size == -1)
+						{
+							cout << endl
+								 << "There is no course to display. Please add courses first.\n";
+						}
+						else
+						{
+							ViewSemesterCourse(codeList, nameList, crtHrsList, semList, semester);
+						}
+						break;
+					}
+
+					case 6:
+					{
+
+						cout << "Enter the details of the student: ";
+						cin >> regNo;
+						cin.get(studentName, 100);
+
+						if (isValidRegistrationNumber(regNo) == 0)
+						{
+							cout << endl
+								 << "Invalid Registration number. Couldn't add the student" << endl;
+						}
+						if (isValidStudentName(studentName) == 0)
+						{
+							cout << endl
+								 << "Invalid Student Name. Couldn't add the student" << endl;
+						}
+
+						addStudent(stdNameList, stdRegNoList, studentName, regNo);
+						std_cre(stdNameList, stdRegNoList);
+						break;
+					}
+
+					case 7:
+					{
+						cout << "Enter the registration number of the student to edit: ";
+						cin >> edit_reNo;
+
+						if (index_reg_code(stdRegNoList, edit_reNo) == -1)
+						{
+							cout << "\nThere is no student by this registration number. \n";
+						}
+						else
+						{
+							cout << "Enter new details of the student: ";
+							cin >> regNo;
+							cin.get(studentName, 100);
+							updateStudent(stdNameList, stdRegNoList, studentName, regNo);
+						}
+
+						break;
+					}
+
+					case 8:
+					{
+						cout << "Enter Registration number of the student to delete: ";
+						cin >> reg_no;
+						cout << endl;
+						if (index_reg_code(stdRegNoList, reg_no) == -1)
+						{
+							cout << "There is no student by this registration number.\n ";
+						}
+
+						else
+						{
+							deleteStudent(stdNameList, stdRegNoList, stdCourseList, reg_no);
+						}
+						break;
+					}
+
+					case 9:
+					{
+
+						cout << "Enter registration Number of the student for course registration: ";
+						cin >> reg_no;
+						cout << endl;
+						if (index_reg_code(stdRegNoList, reg_no) == -1)
+						{
+							cout << "There is no student by this registration number.\n ";
+						}
+						else
+						{
+							cout << "Enter the Course Code to register: ";
+							cin >> courseCode;
+							cout << endl;
+							registerCourse(stdRegNoList, stdCourseList, codeList, reg_no, courseCode);
+						}
+						break;
+					}
+
+					case 10:
+					{
+						cout << "Enter registration number of the student: ";
+						cin >> reg_no;
+						if (index_reg_code(stdRegNoList, reg_no) == -1)
+						{
+							cout << "There is no student by this registration number.\n ";
+						}
+
+						else
+						{
+							cout << "Enter course code to unregister: ";
+							cin >> courseCode;
+							unRegisterCourse(stdRegNoList, stdCourseList, reg_no, courseCode);
+						}
+						break;
+					}
+
+					case 11:
+					{
+						viewstudents(stdRegNoList, stdNameList);
+						break;
+					}
+
+					//logout from the account
+					case 12:
+					{
+						system("CLS");
+						loop = 0;
+						a = 0;
+						break;
+					}
+
+					//Exit the program
+					case 13:
+					{
+						a = 0;
+
+						/*this condition will check save 1 in an external file if there are courses stored in another external file.
 				it also save addcourse counter in the external file*/
 
-				if (check_1)
-				{
-					int var1 = saveCourses(codeList, nameList, crtHrsList, semList, semester);
+						if (check_1)
+						{
+							int var1 = saveCourses(codeList, nameList, crtHrsList, semList, semester);
 
-					if (codeList[0] != "\0")
-					{
-						ofstream b;
-						b.open("check_for_loadCourses.txt");
-						c = 1;
-						b << c;
-						b.close();
+							if (codeList[0] != "\0")
+							{
+								ofstream b;
+								b.open("check_for_loadCourses.txt");
+								c = 1;
+								b << c;
+								b.close();
+							}
+							else
+							{
+								ofstream b;
+								b.open("check_for_loadCourses.txt");
+								c = 0;
+								b << c;
+								b.close();
+							}
+						}
+
+						//this condition will check whether any student has been entered or not
+						if (stdRegNoList[0] != "\0")
+						{
+							ofstream file;
+							file.open("check_for_student.txt");
+							file << "1";
+							file.close();
+						}
+						else
+						{
+							ofstream file;
+							file.open("check_for_student.txt");
+							file << "0";
+							file.close();
+						}
+						saveStudents(stdRegNoList, stdNameList, stdCourseList);
+						cout << "Program has been exited" << endl;
+						return 0;
+						break;
 					}
-					else
+
+					default:
 					{
-						ofstream b;
-						b.open("check_for_loadCourses.txt");
-						c = 0;
-						b << c;
-						b.close();
+						cout << endl
+							 << "Invalid Option. Please select from 1 to 6. ";
 					}
+					}
+
+					cout << endl;
+					cout << "                    *********************************************************************";
+					cout << endl;
 				}
+			}
+			break;
+		}
 
-				//this condition will check whether any student has been entered or not
-				if (stdRegNoList[0] != "\0")
+		//student access
+		case 2:
+		{
+			system("CLS");
+			int x = 1;
+			while (x == 1)
+			{
+				cout << "			    ** Welcome to University Learning Management System ** \n";
+				cout << endl
+					 << "Dear user, current software is intended for authorized users only. \nLogin to the system to get access";
+				cout << endl;
+				cout << endl;
+				string registration_no, password;
+
+				cout << "\nEnter your registration number: ";
+				cin >> registration_no;
+				if (index_reg_code(stdRegNoList, registration_no) == -1)
 				{
-					ofstream file;
-					file.open("check_for_student.txt");
-					file << "1";
-					file.close();
+					cout << "\nThere is no student by this registration number.\n ";
 				}
 				else
 				{
-					ofstream file;
-					file.open("check_for_student.txt");
-					file << "0";
-					file.close();
+					cout << "\nEnter your password: ";
+					cin >> password;
 				}
-				saveStudents(stdRegNoList, stdNameList, stdCourseList);
-				break;
+
+				do
+				{
+					if (check_st == 0)
+					{
+						char dec;
+						cout << "\nDear User, registration_number/password is incorrect. Enter the username/password again \nto get access to the system" << endl
+							 << endl;
+						cout << "Do you want to end the program? Please enter 'Y' for yes and 'N' for no: ";
+						cin >> dec;
+						cout << endl;
+						if (dec == 'Y' || dec == 'y')
+						{
+							return 0;
+						}
+						else
+						{
+							cout << "Enter your registration number: ";
+							cin >> registration_no;
+							if (index_reg_code(stdRegNoList, registration_no) == -1)
+							{
+								cout << "\nThere is no student by this registration number.\n ";
+							}
+							else
+							{
+								cout << "\nEnter your password: ";
+								cin >> password;
+							}
+						}
+					}
+					check_st = loadstd(registration_no, password);
+				} while (check_st == 0);
+
+				x = check_st;
+				int i = 1;
+				if (loadstd(registration_no, password) == 1)
+				{
+					system("CLS");
+					cout << "			    ** Welcome to University Learning Management System ** \n";
+					cout << endl
+						 << "You have successfully logged in the system.\n";
+					cout << endl;
+
+					while (i == 1)
+					{
+						int option_3;
+						cout << endl
+							 << "Choose from the following option: " << endl;
+						cout << endl
+							 << "Press 1 to View Registered Courses.";
+						cout << endl
+							 << "Press 2 to logout of the system. ";
+						cout << endl
+							 << "Press 3 to Exit. \n";
+						cout << endl
+							 << "Option: ";
+						cin >> option_3;
+
+						if (cin.fail())
+						{
+							cout << "\nProgram has been exited.\n";
+							return 0;
+						}
+						switch (option_3)
+						{
+						case 1:
+						{
+							int variable = index_stdCourseList(stdCourseList, registration_no);
+							cout << endl
+								 << "\tRegistered Courses\n";
+							for (int q = 1; stdCourseList[variable][q] != "\0"; q++)
+							{
+								cout << "\t" << stdCourseList[variable][q] << endl;
+							}
+
+							break;
+						}
+						case 2:
+						{
+							system("CLS");
+							x = 1;
+							i = 0;
+							break;
+						}
+						case 3:
+						{
+							cout << endl
+								 << "Program has been exited" << endl;
+							return 0;
+						}
+						default:
+						{
+							cout << endl
+								 << "Invalid Number. Please enter a number between 1 to 3." << endl;
+						}
+						}
+					}
+				}
 			}
 
-			default:
-			{
-				cout << endl
-					 << "Invalid Option. Please select from 1 to 6. ";
-			}
-			}
+			break;
+		}
 
-			cout << endl;
-			cout << "                    *********************************************************************";
-			cout << endl;
+		//exit program
+		case 3:
+		{
+			it = 0;
+			cout << endl
+				 << "Program has been exited" << endl;
+			break;
+		}
+
+		default:
+		{
+			cout << endl
+				 << "Invalid Option. Please enter 1 or 2. " << endl
+				 << endl;
+		}
 		}
 	}
+
 	return 0;
 }
